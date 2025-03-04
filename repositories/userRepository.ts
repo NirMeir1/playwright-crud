@@ -15,6 +15,12 @@ export class UserRepository {
     return result.length > 0 ? new User(result[0].id, result[0].name, result[0].email) : null;
   }
 
+  static async updateUserEmail(oldEmail: string, newEmail: string): Promise<User | null> {
+    const query = `UPDATE users SET email = $1 WHERE email = $2 RETURNING *`;
+    const result = await Database.query(query, [newEmail, oldEmail]);
+    return result.length > 0 ? new User(result[0].id, result[0].name, result[0].email) : null;
+  }
+
   static async deleteUser(email: string): Promise<boolean> {
     const query = `DELETE FROM users WHERE email = $1 RETURNING *`;
     const result = await Database.query(query, [email]);
