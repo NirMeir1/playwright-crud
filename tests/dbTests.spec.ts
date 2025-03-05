@@ -1,50 +1,61 @@
 import { test, expect } from "@playwright/test";
-import { UserService } from "../services/userService";
+import { MemberService } from "../services/memberService";
 import { TestDataFactory } from "../utils/testDataFactory";
-import { User } from "../models/userModel";
 
-test.describe("PostgreSQL CRUD Operations with Playwright", () => {
+test.describe("PostgreSQL CRUD Operations on CD Schema", () => {
   
-  let testUser: User;
-  let updatedEmail: string;
+  let testMember: { surname: string; firstname: string; telephone: string };
 
   test.beforeEach(() => {
-    testUser = TestDataFactory.generateUser();
-    updatedEmail = "updated_" + testUser.email;
+    testMember = TestDataFactory.generateMember();
   });
 
-  // **1️⃣ Create User**
-  test("Create User", async () => {
-    const createdUser = await UserService.createUser(testUser.name, testUser.email);
-    expect(createdUser).not.toBeNull();
-    expect(createdUser.email).toBe(testUser.email);
-    console.log("✅ User Created:", createdUser);
+  test("Create Member", async () => {
+    const createdMember = await MemberService.createMember(
+      testMember.surname,
+      testMember.firstname,
+      testMember.telephone
+    );
+    expect(createdMember).not.toBeNull();
+    expect(createdMember.telephone).toBe(testMember.telephone);
+    console.log("✅ Member Created:", createdMember);
   });
 
-  // **2️⃣ Read User**
-  test("Read User", async () => {
-    await UserService.createUser(testUser.name, testUser.email);
-    const fetchedUser = await UserService.findUser(testUser.email);
-    expect(fetchedUser).not.toBeNull();
-    expect(fetchedUser?.email).toBe(testUser.email);
-    console.log("✅ User Retrieved:", fetchedUser);
+  test("Read Member", async () => {
+    await MemberService.createMember(
+      testMember.surname,
+      testMember.firstname,
+      testMember.telephone
+    );
+    const fetchedMember = await MemberService.findMemberBytelephone(testMember.telephone);
+    expect(fetchedMember).not.toBeNull();
+    expect(fetchedMember?.telephone).toBe(testMember.telephone);
+    console.log("✅ Member Retrieved:", fetchedMember);
   });
 
-  // **3️⃣ Update User Email**
-  test("Update User Email", async () => {
-    await UserService.createUser(testUser.name, testUser.email);
-    const updatedUser = await UserService.updateUserEmail(testUser.email, updatedEmail);
-    expect(updatedUser).not.toBeNull();
-    expect(updatedUser?.email).toBe(updatedEmail);
-    console.log("✅ User Email Updated:", updatedUser);
+  test("Update Member telephone", async () => {
+    await MemberService.createMember(
+      testMember.surname,
+      testMember.firstname,
+      testMember.telephone
+    );
+    const updatedMember = await MemberService.updateMembertelephone(
+      testMember.telephone,
+      "1234567890"
+    );
+    expect(updatedMember).not.toBeNull();
+    expect(updatedMember?.telephone).toBe("1234567890");
+    console.log("✅ Member telephone Updated:", updatedMember);
   });
 
-  // **4️⃣ Delete User**
-  test("Delete User", async () => {
-    await UserService.createUser(testUser.name, testUser.email);
-    const deleted = await UserService.removeUser(testUser.email);
+  test("Delete Member", async () => {
+    await MemberService.createMember(
+      testMember.surname,
+      testMember.firstname,
+      testMember.telephone
+    );
+    const deleted = await MemberService.removeMember(testMember.telephone);
     expect(deleted).toBe(true);
-    console.log("✅ User Deleted:", testUser.email);
+    console.log("✅ Member Deleted:", testMember.telephone);
   });
-
 });
