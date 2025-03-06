@@ -39,14 +39,20 @@ test.describe("PostgreSQL CRUD Operations on CD Schema", () => {
       testMember.firstname,
       testMember.telephone
     );
+
+    // Ensure a unique new telephone number
+    const newTelephone = `1${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+
     const updatedMember = await MemberService.updateMembertelephone(
       testMember.telephone,
-      "1234567890"
+      newTelephone
     );
+
     expect(updatedMember).not.toBeNull();
-    expect(updatedMember?.telephone).toBe("1234567890");
+    expect(updatedMember?.telephone).toBe(newTelephone);
     console.log("✅ Member telephone Updated:", updatedMember);
   });
+
 
   test("Delete Member", async () => {
     await MemberService.createMember(
