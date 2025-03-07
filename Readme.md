@@ -16,7 +16,7 @@ This project is an automation framework for testing CRUD (Create, Read, Update, 
     ```
 
 3. Configure environment variables in the `.env` file. The default configuration uses a local PostgreSQL database:
-    - **DATABASE_URL**: `postgresql://postgres:Niro123!@localhost:5432/pgexercises?options=-c%20search_path=cd`
+    - **DATABASE_URL**: `postgresql://postgres:my_database_pass@localhost:5432/pgexercises?options=-c%20search_path=cd`
 
 
 ## Project Structure
