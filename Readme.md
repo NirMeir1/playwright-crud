@@ -37,15 +37,15 @@ This project is an automation framework for testing CRUD (Create, Read, Update, 
 - **`node_modules/`**: Installed project dependencies.
 
 
-Design Patterns Used:
+**Design Patterns Used:**
 
-Repository Pattern: Used in repositories/memberRepository.ts to abstract the database interaction layer, allowing for easy maintenance and testing.
+**Repository Pattern**: Used in repositories/memberRepository.ts to abstract the database interaction layer, allowing for easy maintenance and testing.
 
-Service Pattern: Used in services/memberService.ts to encapsulate business logic, making the code more modular and easier to test.
+**Service Pattern**: Used in services/memberService.ts to encapsulate business logic, making the code more modular and easier to test.
 
-Singleton Pattern: Used in dbClient.ts to ensure a single instance of the database connection is used throughout the application.
+**Singleton Pattern**: Used in dbClient.ts to ensure a single instance of the database connection is used throughout the application.
 
-Factory Pattern: Used in testDataFactory.ts to generate test data, allowing for easy creation of various types of test data.
+**Factory Pattern**: Used in testDataFactory.ts to generate test data, allowing for easy creation of various types of test data.
 
 
 ## Running Tests
