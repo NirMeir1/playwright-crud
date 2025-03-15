@@ -1,58 +1,38 @@
-import { Pool } from "pg";
-import DatabaseConfig from "../config/dbConfig";
-import { Logger } from "../utils/logger";
-
-const pool: Pool = DatabaseConfig.getInstance();
+import { Database } from "../utils/dbClient"; 
 
 export class MemberRepository {
+
+  // Create a Member
   static async createMember(surname: string, firstname: string, telephone: string) {
     const queryText = `
-        INSERT INTO cd.members (memid, surname, firstname, joindate, telephone) 
-        VALUES (DEFAULT, $1, $2, NOW(), $3) RETURNING *`;
-    
-    try {
-      const result = await pool.query(queryText, [surname, firstname, telephone]);
-      return result.rows[0];
-    } catch (error) {
-      Logger.error("Database Query Failed", { queryText, error });
-      throw error;
-    }
-}
+      INSERT INTO cd.members (memid, surname, firstname, joindate, telephone)
+      VALUES (DEFAULT, $1, $2, NOW(), $3) RETURNING *`;
 
+    const result = await Database.query(queryText, [surname, firstname, telephone]);  // Using Database.query()
+    return result[0];  // Return the first row from the result (created member)
+  }
 
-  static async getMemberBytelephone(telephone: string) {
+  // Get Member by Telephone
+  static async getMemberByTelephone(telephone: string) {
     const queryText = `SELECT * FROM cd.members WHERE telephone = $1`;
-    
-    try {
-      const result = await pool.query(queryText, [telephone]);
-      return result.rows[0] || null;
-    } catch (error) {
-      Logger.error("Database Query Failed", { queryText, error });
-      throw error;
-    }
+
+    const result = await Database.query(queryText, [telephone]);  // Using Database.query()
+    return result[0] || null;  // Return member or null if not found
   }
 
-  static async updateMembertelephone(oldtelephone: string, newtelephone: string) {
+  // Update Member's Telephone
+  static async updateMemberTelephone(oldTelephone: string, newTelephone: string) {
     const queryText = `UPDATE cd.members SET telephone = $1 WHERE telephone = $2 RETURNING *`;
-    
-    try {
-      const result = await pool.query(queryText, [newtelephone, oldtelephone]);
-      return result.rows[0] || null;
-    } catch (error) {
-      Logger.error("Database Query Failed", { queryText, error });
-      throw error;
-    }
+
+    const result = await Database.query(queryText, [newTelephone, oldTelephone]);  // Using Database.query()
+    return result[0] || null;  // Return updated member data
   }
 
+  // Delete Member
   static async deleteMember(telephone: string) {
     const queryText = `DELETE FROM cd.members WHERE telephone = $1 RETURNING *`;
 
-    try {
-      const result = await pool.query(queryText, [telephone]);
-      return (result.rowCount ?? 0) > 0; // Ensures rowCount is always a number
-    } catch (error) {
-      Logger.error("Database Query Failed", { queryText, error });
-      throw error;
-    }
+    const result = await Database.query(queryText, [telephone]);  // Using Database.query()
+    return (result.length ?? 0) > 0;  // Return true if rows were deleted
   }
 }

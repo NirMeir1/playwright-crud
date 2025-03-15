@@ -9,16 +9,16 @@ export class MemberService {
   }
 
   static async findMemberBytelephone(telephone: string) {
-    return await MemberRepository.getMemberBytelephone(telephone);
+    return await MemberRepository.getMemberByTelephone(telephone);
   }
 
   static async updateMembertelephone(oldtelephone: string, newtelephone: string) {
-    const existingMember = await MemberRepository.getMemberBytelephone(newtelephone);
+    const existingMember = await MemberRepository.getMemberByTelephone(newtelephone);
     if (existingMember) {
       throw new Error("telephone number already in use");
     }
     Logger.log("Updating Member telephone", { oldtelephone, newtelephone });
-    return await MemberRepository.updateMembertelephone(oldtelephone, newtelephone);
+    return await MemberRepository.updateMemberTelephone(oldtelephone, newtelephone);
   }
 
   static async removeMember(telephone: string) {
