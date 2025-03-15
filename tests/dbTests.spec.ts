@@ -10,27 +10,18 @@ test.describe("PostgreSQL CRUD Operations on CD Schema", () => {
     testMember = TestDataFactory.generateMember();
   });
 
-  test("Create Member", async () => {
+  test("Create and Read Member", async () => {
+    // Create Member
     const createdMember = await MemberService.createMember(
       testMember.surname,
       testMember.firstname,
       testMember.telephone
     );
-    expect(createdMember).not.toBeNull();
-    expect(createdMember.telephone).toBe(testMember.telephone);
-    console.log("✅ Member Created:", createdMember);
-  });
 
-  test("Read Member", async () => {
-    await MemberService.createMember(
-      testMember.surname,
-      testMember.firstname,
-      testMember.telephone
-    );
+    // Validate that the member was created and can be read
     const fetchedMember = await MemberService.findMemberBytelephone(testMember.telephone);
     expect(fetchedMember).not.toBeNull();
-    expect(fetchedMember?.telephone).toBe(testMember.telephone);
-    console.log("✅ Member Retrieved:", fetchedMember);
+    expect(fetchedMember.telephone).toBe(testMember.telephone);
   });
 
   test("Update Member telephone", async () => {
@@ -40,19 +31,22 @@ test.describe("PostgreSQL CRUD Operations on CD Schema", () => {
       testMember.telephone
     );
 
-    // Ensure a unique new telephone number
     const newTelephone = `1${Math.floor(1000000000 + Math.random() * 9000000000)}`;
 
-    const updatedMember = await MemberService.updateMembertelephone(
+    await MemberService.updateMembertelephone(
       testMember.telephone,
       newTelephone
     );
 
+    // Validate the update using MemberService
+    const updatedMember = await MemberService.findMemberBytelephone(newTelephone);
     expect(updatedMember).not.toBeNull();
-    expect(updatedMember?.telephone).toBe(newTelephone);
-    console.log("✅ Member telephone Updated:", updatedMember);
-  });
+    expect(updatedMember.telephone).toBe(newTelephone);
 
+    // Ensure the old telephone is no longer found
+    const oldMember = await MemberService.findMemberBytelephone(testMember.telephone);
+    expect(oldMember).toBeNull();
+  });
 
   test("Delete Member", async () => {
     await MemberService.createMember(
@@ -60,8 +54,12 @@ test.describe("PostgreSQL CRUD Operations on CD Schema", () => {
       testMember.firstname,
       testMember.telephone
     );
+
     const deleted = await MemberService.removeMember(testMember.telephone);
     expect(deleted).toBe(true);
-    console.log("✅ Member Deleted:", testMember.telephone);
+
+    // After deletion, ensure that the member cannot be found
+    const fetchedAfterDelete = await MemberService.findMemberBytelephone(testMember.telephone);
+    expect(fetchedAfterDelete).toBeNull();
   });
 });
